@@ -1,18 +1,18 @@
 import React from 'react'; 
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import BisectionPage from './component/root/Bisection/Bisection';
-import FalsePosition from './component/root/FalsePosition/FalsePosition'; 
-import NewtonRaphson from './component/root/NewtonRaphson/NewtonRaphson'; 
-import Secant from './component/root/Secant/Secant';
-import CramersRule from './component/Linear/CramersRule/CramersRule';
-import OnePoint from './component/root/OnePoint/OnePoint';
+import BisectionPage from './All/root/Bisection/Bisection';
+import FalsePosition from './All/root/FalsePosition/FalsePosition'; 
+import NewtonRaphson from './All/root/NewtonRaphson/NewtonRaphson'; 
+import Secant from './All/root/Secant/Secant';
+import CramersRule from './All/Linear/CramersRule/CramersRule';
+import OnePoint from './All/root/OnePoint/OnePoint';
 
 const App = () => {
     return (
         <Router>
             <div className="container-fluid p-3">
-                <div className="btn-group">
+                <div className="btn-group"> 
                     <h3>Root of equation</h3>
                     <Link to="/" className="me-2">
                         <button className="btn btn-primary">Home</button>
@@ -39,13 +39,14 @@ const App = () => {
             </div>
             <div className="container-fluid p-3">
 
-            <div className="btn-group">
+            <div className="btn-group">         
                 <h3 className="me-2">Linear system</h3>
                     <Link to="/cramersRule" className="me-2">
                         <button className="btn btn-dark">Cramers Rule</button> 
                     </Link>
                 </div>
             </div>
+            <hr></hr>
             <Routes>
                 <Route path="/bisection" element={<BisectionPage />} />
                 <Route path="/falseposition" element={<FalsePosition />} /> 
