@@ -4,77 +4,68 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const API_URL = 'http://localhost:5000/api/matrix-data';
 
-const CramerRule = () => {
-    const [matrixSize, setMatrixSize] = useState(2); // Default2x2
+const LUDecomposition = () => {
+    const [matrixSize, setMatrixSize] = useState(2);
     const [matrix, setMatrix] = useState(Array(2).fill(Array(2).fill(0)));
     const [constants, setConstants] = useState(Array(2).fill(0));
     const [solution, setSolution] = useState([]);
     const [showResults, setShowResults] = useState(false);
 
     useEffect(() => {
-        // Update size
-        const newMatrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(0));
-        const newConstants = Array(matrixSize).fill(0);
-        setMatrix(newMatrix);
-        setConstants(newConstants);
+        setMatrix(Array(matrixSize).fill(Array(matrixSize).fill(0)));
+        setConstants(Array(matrixSize).fill(0));
         setShowResults(false);
     }, [matrixSize]);
 
-    const calculateDeterminant = (matrix) => {
+    const luDecompose = (matrix) => {
         const n = matrix.length;
-        if (n === 2) {
-            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-        } else if (n === 3) {
-            return (
-                matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
-                matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
-                matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])
-            );
-        } else if (n === 4) {
-            
-            return (
-                matrix[0][0] * (
-                    matrix[1][1] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
-                    matrix[1][2] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) +
-                    matrix[1][3] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1])
-                ) -
-                matrix[0][1] * (
-                    matrix[1][0] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
-                    matrix[1][2] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
-                    matrix[1][3] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0])
-                ) +
-                matrix[0][2] * (
-                    matrix[1][0] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) -
-                    matrix[1][1] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
-                    matrix[1][3] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
-                ) -
-                matrix[0][3] * (
-                    matrix[1][0] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1]) -
-                    matrix[1][1] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0]) +
-                    matrix[1][2] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
-                )
-            );
+        const L = Array(n).fill(null).map(() => Array(n).fill(0));
+        const U = Array(n).fill(null).map(() => Array(n).fill(0));
+
+        for (let i = 0; i < n; i++) {
+            for (let k = i; k < n; k++) {
+                let sum = 0;
+                for (let j = 0; j < i; j++) sum += L[i][j] * U[j][k];
+                U[i][k] = matrix[i][k] - sum;
+            }
+
+            for (let k = i; k < n; k++) {
+                if (i === k) L[i][i] = 1;
+                else {
+                    let sum = 0;
+                    for (let j = 0; j < i; j++) sum += L[k][j] * U[j][i];
+                    L[k][i] = (matrix[k][i] - sum) / U[i][i];
+                }
+            }
         }
-        return 0; 
+        return { L, U };
     };
 
-    const calculateCramer = () => {
-        const detA = calculateDeterminant(matrix);
-        if (detA === 0) {
-            alert("Determinant is zero. The system has no unique solution.");
-            return;
+    const forwardSubstitution = (L, b) => {
+        const y = Array(b.length).fill(0);
+        for (let i = 0; i < b.length; i++) {
+            let sum = 0;
+            for (let j = 0; j < i; j++) sum += L[i][j] * y[j];
+            y[i] = (b[i] - sum) / L[i][i];
         }
+        return y;
+    };
 
-        const solutions = [];
-        for (let i = 0; i < matrixSize; i++) {
-            const tempMatrix = matrix.map(row => [...row]);
-            for (let j = 0; j < matrixSize; j++) {
-                tempMatrix[j][i] = constants[j];
-            }
-            const detAi = calculateDeterminant(tempMatrix);
-            solutions.push(detAi / detA);
+    const backwardSubstitution = (U, y) => {
+        const x = Array(y.length).fill(0);
+        for (let i = y.length - 1; i >= 0; i--) {
+            let sum = 0;
+            for (let j = i + 1; j < y.length; j++) sum += U[i][j] * x[j];
+            x[i] = (y[i] - sum) / U[i][i];
         }
-        setSolution(solutions);
+        return x;
+    };
+
+    const calculateLU = () => {
+        const { L, U } = luDecompose(matrix);
+        const y = forwardSubstitution(L, constants);
+        const x = backwardSubstitution(U, y);
+        setSolution(x);
         setShowResults(true);
     };
 
@@ -144,9 +135,11 @@ const CramerRule = () => {
                         style={{ width: "60px", margin: "5px" }}
                     />
                 ))}
+
             </Form>
-            <Button variant="dark" onClick={calculateCramer}>Calculate</Button>
+            <Button variant="dark" onClick={calculateLU}>Calculate</Button>
             <Button variant="info" onClick={handleFetchData} style={{ marginLeft: "10px" }}>Fetch API</Button>
+
             {showResults && (
                 <>
                     <h5>Solutions:</h5>
@@ -172,4 +165,4 @@ const CramerRule = () => {
     );
 };
 
-export default CramerRule;
+export default LUDecomposition;

@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express'); 
 const cors = require('cors');
 const app = express();
 const PORT = 5000;
@@ -18,25 +18,24 @@ const fetchDataRoot = async () => {
     }
 };
 
-const fetchDataCramers = async () => {
+const fetchMatrixData = async () => {
     try {
-        
         const matrix = [
-            [2, -1, 3],
-            [3, 2, 1],
-            [1, 1, -1]
+            [4, -1, 0, 0],
+            [-1, 4, -1, 0],
+            [0, -1, 4, -1],
+            [0, 0, -1, 3]
         ];
-        const constants = [1, 2, 3];
+        const constants = [15, 10, 10, 10];
 
         return { matrix, constants };
     } catch (error) {
-        console.error("Error fetching data from API:", error);
+        console.error("Error fetching matrix data:", error);
         throw error; 
     }
 };
 
 app.use(cors());
-
 app.get('/api/data', async (req, res) => {
     try {
         const data = await fetchDataRoot();
@@ -46,12 +45,22 @@ app.get('/api/data', async (req, res) => {
     }
 });
 
-app.get('/api/cramers-data', async (req, res) => {
+app.get('/api/matrix-data', async (req, res) => {
     try {
-        const data = await fetchDataCramers();
+        const data = await fetchMatrixData();
         res.json(data);
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching data' });
+        res.status(500).json({ error: 'Error fetching matrix data' });
+    }
+});
+
+
+app.get('/api/jacobi-data', async (req, res) => {
+    try {
+        const data = await fetchMatrixData(); 
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching Jacobi data' });
     }
 });
 

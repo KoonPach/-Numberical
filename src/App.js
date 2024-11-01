@@ -7,7 +7,14 @@ import NewtonRaphson from './All/root/NewtonRaphson/NewtonRaphson';
 import Secant from './All/root/Secant/Secant';
 import CramersRule from './All/Linear/CramersRule/CramersRule';
 import OnePoint from './All/root/OnePoint/OnePoint';
-
+import GaussElimination from './All/Linear/GaussElimination/GaussElimination';
+import MatrixInverse from './All/Linear/MatrixInverse/MatrixInverse';
+import GaussJordan from './All/Linear/GaussJordan/GaussJordan';
+import LUDecomposition from './All/Linear/LUDecomposition/LUDecomposition';
+import Cholesky from './All/Linear/Cholesky/Cholesky';
+import Jacobi from './All/Linear/Jacobi/Jacobi';
+import GaussSeidel from './All/Linear/GaussSeidel/GaussSeidel';
+import Conjugate from './All/Linear/Conjugate/Conjugate';
 const App = () => {
     return (
         <Router>
@@ -44,6 +51,35 @@ const App = () => {
                     <Link to="/cramersRule" className="me-2">
                         <button className="btn btn-dark">Cramers Rule</button> 
                     </Link>
+                    <Link to="/GaussElimination" className="me-2">
+                        <button className="btn btn-dark">GaussElimination</button> 
+                    </Link>
+                    <Link to="/MatrixInverse" className="me-2">
+                        <button className="btn btn-dark">MatrixInverse</button> 
+                    </Link>
+                    <Link to="/GaussJordan" className="me-2">
+                        <button className="btn btn-dark">GaussJordan</button> 
+                    </Link>
+                    <Link to="/LUDecomposition" className="me-2">
+                        <button className="btn btn-dark">LU</button> 
+                    </Link>
+
+                    <Link to="/Cholesky" className="me-2">
+                        <button className="btn btn-dark">Cholesky</button> 
+                    </Link>
+
+                    <Link to="/Jacobi" className="me-2">
+                        <button className="btn btn-dark">Jacobi</button> 
+                    </Link>
+
+                    <Link to="/GaussSeidel" className="me-2">
+                        <button className="btn btn-dark">GaussSeidel</button> 
+                    </Link>
+                   
+                    <Link to="/Conjugate" className="me-2">
+                        <button className="btn btn-dark">Conjugate</button> 
+                    </Link>
+                    
                 </div>
             </div>
             <hr></hr>
@@ -54,6 +90,14 @@ const App = () => {
                 <Route path="/newtonRaphson" element={<NewtonRaphson />} /> 
                 <Route path="/secant" element={<Secant />} /> 
                 <Route path="/cramersRule" element={<CramersRule />} /> 
+                <Route path="/GaussElimination" element={<GaussElimination />} /> 
+                <Route path="/MatrixInverse" element={<MatrixInverse />} /> 
+                <Route path="/GaussJordan" element={<GaussJordan />} /> 
+                <Route path="/LUDecomposition" element={<LUDecomposition />} /> 
+                <Route path="/Cholesky" element={<Cholesky />} /> 
+                <Route path="/Jacobi" element={<Jacobi />} /> 
+                <Route path="/GaussSeidel" element={<GaussSeidel />} /> 
+                <Route path="/Conjugate" element={<Conjugate />} /> 
             </Routes>
         </Router>
     );

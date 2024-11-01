@@ -2,79 +2,49 @@ import { useState, useEffect } from "react";
 import { Button, Container, Form, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const API_URL = 'http://localhost:5000/api/matrix-data';
+const API_URL = 'http://localhost:5000/api/jacobi-data'; 
 
-const CramerRule = () => {
-    const [matrixSize, setMatrixSize] = useState(2); // Default2x2
+const Jacobi = () => {
+    const [matrixSize, setMatrixSize] = useState(2); 
     const [matrix, setMatrix] = useState(Array(2).fill(Array(2).fill(0)));
     const [constants, setConstants] = useState(Array(2).fill(0));
     const [solution, setSolution] = useState([]);
+    const [iterations, setIterations] = useState(25);
     const [showResults, setShowResults] = useState(false);
 
     useEffect(() => {
-        // Update size
-        const newMatrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(0));
-        const newConstants = Array(matrixSize).fill(0);
-        setMatrix(newMatrix);
-        setConstants(newConstants);
+        setMatrix(Array(matrixSize).fill(Array(matrixSize).fill(0)));
+        setConstants(Array(matrixSize).fill(0));
+        setSolution(Array(matrixSize).fill(0));
         setShowResults(false);
     }, [matrixSize]);
 
-    const calculateDeterminant = (matrix) => {
-        const n = matrix.length;
-        if (n === 2) {
-            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-        } else if (n === 3) {
-            return (
-                matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
-                matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
-                matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])
-            );
-        } else if (n === 4) {
-            
-            return (
-                matrix[0][0] * (
-                    matrix[1][1] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
-                    matrix[1][2] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) +
-                    matrix[1][3] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1])
-                ) -
-                matrix[0][1] * (
-                    matrix[1][0] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
-                    matrix[1][2] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
-                    matrix[1][3] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0])
-                ) +
-                matrix[0][2] * (
-                    matrix[1][0] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) -
-                    matrix[1][1] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
-                    matrix[1][3] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
-                ) -
-                matrix[0][3] * (
-                    matrix[1][0] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1]) -
-                    matrix[1][1] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0]) +
-                    matrix[1][2] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
-                )
-            );
+    const jacobiIteration = (A, b, x) => {
+        const n = b.length;
+        const xNew = Array(n).fill(0);
+
+        for (let i = 0; i < n; i++) {
+            let sum = 0;
+            for (let j = 0; j < n; j++) {
+                if (j !== i) {
+                    sum += A[i][j] * x[j];
+                }
+            }
+            xNew[i] = (b[i] - sum) / A[i][i];
         }
-        return 0; 
+        return xNew;
     };
 
-    const calculateCramer = () => {
-        const detA = calculateDeterminant(matrix);
-        if (detA === 0) {
-            alert("Determinant is zero. The system has no unique solution.");
-            return;
+    const calculateJacobi = () => {
+        let x = Array(matrixSize).fill(0);
+        let newX = Array(matrixSize).fill(0);
+
+        for (let iter = 0; iter < iterations; iter++) {
+            newX = jacobiIteration(matrix, constants, x);
+            x = newX;
         }
 
-        const solutions = [];
-        for (let i = 0; i < matrixSize; i++) {
-            const tempMatrix = matrix.map(row => [...row]);
-            for (let j = 0; j < matrixSize; j++) {
-                tempMatrix[j][i] = constants[j];
-            }
-            const detAi = calculateDeterminant(tempMatrix);
-            solutions.push(detAi / detA);
-        }
-        setSolution(solutions);
+        setSolution(x);
         setShowResults(true);
     };
 
@@ -93,6 +63,10 @@ const CramerRule = () => {
         const newConstants = [...constants];
         newConstants[index] = parseFloat(value);
         setConstants(newConstants);
+    };
+
+    const handleIterationsChange = (event) => {
+        setIterations(parseInt(event.target.value));
     };
 
     const handleFetchData = async () => {
@@ -144,9 +118,20 @@ const CramerRule = () => {
                         style={{ width: "60px", margin: "5px" }}
                     />
                 ))}
+
+                <Form.Group>
+                    <Form.Label>Number of Iterations</Form.Label>
+                    <Form.Control
+                        type="number"
+                        value={iterations}
+                        onChange={handleIterationsChange}
+                        min={1}
+                    />
+                </Form.Group>
             </Form>
-            <Button variant="dark" onClick={calculateCramer}>Calculate</Button>
+            <Button variant="dark" onClick={calculateJacobi}>Calculate</Button>
             <Button variant="info" onClick={handleFetchData} style={{ marginLeft: "10px" }}>Fetch API</Button>
+
             {showResults && (
                 <>
                     <h5>Solutions:</h5>
@@ -172,4 +157,4 @@ const CramerRule = () => {
     );
 };
 
-export default CramerRule;
+export default Jacobi;

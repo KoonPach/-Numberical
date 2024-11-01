@@ -4,77 +4,55 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const API_URL = 'http://localhost:5000/api/matrix-data';
 
-const CramerRule = () => {
-    const [matrixSize, setMatrixSize] = useState(2); // Default2x2
+const GaussElimination = () => {
+    const [matrixSize, setMatrixSize] = useState(2); 
     const [matrix, setMatrix] = useState(Array(2).fill(Array(2).fill(0)));
     const [constants, setConstants] = useState(Array(2).fill(0));
     const [solution, setSolution] = useState([]);
     const [showResults, setShowResults] = useState(false);
 
     useEffect(() => {
-        // Update size
-        const newMatrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(0));
-        const newConstants = Array(matrixSize).fill(0);
-        setMatrix(newMatrix);
-        setConstants(newConstants);
+       
+        setMatrix(Array(matrixSize).fill(Array(matrixSize).fill(0)));
+        setConstants(Array(matrixSize).fill(0));
         setShowResults(false);
     }, [matrixSize]);
 
-    const calculateDeterminant = (matrix) => {
-        const n = matrix.length;
-        if (n === 2) {
-            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-        } else if (n === 3) {
-            return (
-                matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
-                matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
-                matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])
-            );
-        } else if (n === 4) {
-            
-            return (
-                matrix[0][0] * (
-                    matrix[1][1] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
-                    matrix[1][2] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) +
-                    matrix[1][3] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1])
-                ) -
-                matrix[0][1] * (
-                    matrix[1][0] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
-                    matrix[1][2] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
-                    matrix[1][3] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0])
-                ) +
-                matrix[0][2] * (
-                    matrix[1][0] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) -
-                    matrix[1][1] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
-                    matrix[1][3] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
-                ) -
-                matrix[0][3] * (
-                    matrix[1][0] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1]) -
-                    matrix[1][1] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0]) +
-                    matrix[1][2] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
-                )
-            );
-        }
-        return 0; 
-    };
+    const calculateGaussElimination = () => {
+       
+        const mat = matrix.map(row => [...row]);
+        const consts = [...constants];
+        const n = matrixSize;
 
-    const calculateCramer = () => {
-        const detA = calculateDeterminant(matrix);
-        if (detA === 0) {
-            alert("Determinant is zero. The system has no unique solution.");
-            return;
-        }
-
-        const solutions = [];
-        for (let i = 0; i < matrixSize; i++) {
-            const tempMatrix = matrix.map(row => [...row]);
-            for (let j = 0; j < matrixSize; j++) {
-                tempMatrix[j][i] = constants[j];
+        //Forward 
+        for (let i = 0; i < n; i++) {
+          
+            if (mat[i][i] === 0) {
+                alert("cannot be solved");
+                return;
             }
-            const detAi = calculateDeterminant(tempMatrix);
-            solutions.push(detAi / detA);
+
+            // Normalize pivot row
+            for (let j = i + 1; j < n; j++) {
+                const factor = mat[j][i] / mat[i][i];
+                for (let k = i; k < n; k++) {
+                    mat[j][k] -= factor * mat[i][k];
+                }
+                consts[j] -= factor * consts[i];
+            }
         }
-        setSolution(solutions);
+
+        //Back 
+        const sol = Array(n).fill(0);
+        for (let i = n - 1; i >= 0; i--) {
+            let sum = consts[i];
+            for (let j = i + 1; j < n; j++) {
+                sum -= mat[i][j] * sol[j];
+            }
+            sol[i] = sum / mat[i][i];
+        }
+
+        setSolution(sol);
         setShowResults(true);
     };
 
@@ -133,7 +111,7 @@ const CramerRule = () => {
                         ))}
                     </div>
                 ))}
-
+    
                 <h5>Enter Matrix B:</h5>
                 {constants.map((value, i) => (
                     <input
@@ -145,8 +123,9 @@ const CramerRule = () => {
                     />
                 ))}
             </Form>
-            <Button variant="dark" onClick={calculateCramer}>Calculate</Button>
+            <Button variant="dark" onClick={calculateGaussElimination}>Calculate</Button>
             <Button variant="info" onClick={handleFetchData} style={{ marginLeft: "10px" }}>Fetch API</Button>
+
             {showResults && (
                 <>
                     <h5>Solutions:</h5>
@@ -172,4 +151,4 @@ const CramerRule = () => {
     );
 };
 
-export default CramerRule;
+export default GaussElimination;

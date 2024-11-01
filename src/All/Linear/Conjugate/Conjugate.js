@@ -4,15 +4,15 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const API_URL = 'http://localhost:5000/api/matrix-data';
 
-const CramerRule = () => {
-    const [matrixSize, setMatrixSize] = useState(2); // Default2x2
+const Conjugate = () => {
+    const [matrixSize, setMatrixSize] = useState(2); 
     const [matrix, setMatrix] = useState(Array(2).fill(Array(2).fill(0)));
     const [constants, setConstants] = useState(Array(2).fill(0));
     const [solution, setSolution] = useState([]);
     const [showResults, setShowResults] = useState(false);
+    const [iterations, setIterations] = useState(100); 
 
     useEffect(() => {
-        // Update size
         const newMatrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(0));
         const newConstants = Array(matrixSize).fill(0);
         setMatrix(newMatrix);
@@ -20,61 +20,42 @@ const CramerRule = () => {
         setShowResults(false);
     }, [matrixSize]);
 
-    const calculateDeterminant = (matrix) => {
-        const n = matrix.length;
-        if (n === 2) {
-            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-        } else if (n === 3) {
-            return (
-                matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
-                matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
-                matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])
-            );
-        } else if (n === 4) {
-            
-            return (
-                matrix[0][0] * (
-                    matrix[1][1] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
-                    matrix[1][2] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) +
-                    matrix[1][3] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1])
-                ) -
-                matrix[0][1] * (
-                    matrix[1][0] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
-                    matrix[1][2] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
-                    matrix[1][3] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0])
-                ) +
-                matrix[0][2] * (
-                    matrix[1][0] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) -
-                    matrix[1][1] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
-                    matrix[1][3] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
-                ) -
-                matrix[0][3] * (
-                    matrix[1][0] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1]) -
-                    matrix[1][1] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0]) +
-                    matrix[1][2] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
-                )
-            );
-        }
-        return 0; 
-    };
+    const calculateConjugateGradient = () => {
+        const x = Array(matrixSize).fill(0); 
+        const b = constants.slice();
+        const r = b.map((bi, i) => bi - matrix[i].reduce((acc, aij, j) => acc + aij * x[j], 0)); // Initial residual
+        let p = [...r]; 
+        const tolerance = 1e-10;
 
-    const calculateCramer = () => {
-        const detA = calculateDeterminant(matrix);
-        if (detA === 0) {
-            alert("Determinant is zero. The system has no unique solution.");
-            return;
-        }
+        for (let it = 0; it < iterations; it++) {
+            const rsold = r.reduce((acc, val) => acc + val * val, 0); 
 
-        const solutions = [];
-        for (let i = 0; i < matrixSize; i++) {
-            const tempMatrix = matrix.map(row => [...row]);
-            for (let j = 0; j < matrixSize; j++) {
-                tempMatrix[j][i] = constants[j];
+   
+            const Ap = matrix.map(row => row.reduce((acc, aij, j) => acc + aij * p[j], 0));
+
+            const alpha = rsold / p.reduce((acc, pi, i) => acc + pi * Ap[i], 0);
+
+         
+            for (let i = 0; i < matrixSize; i++) {
+                x[i] += alpha * p[i];
             }
-            const detAi = calculateDeterminant(tempMatrix);
-            solutions.push(detAi / detA);
+
+       
+            for (let i = 0; i < matrixSize; i++) {
+                r[i] -= alpha * Ap[i];
+            }
+
+            const rsnew = r.reduce((acc, val) => acc + val * val, 0); 
+
+            if (Math.sqrt(rsnew) < tolerance) {
+                break;
+            }
+
+ 
+            p = r.map((ri, i) => ri + (rsnew / rsold) * p[i]);
         }
-        setSolution(solutions);
+
+        setSolution(x);
         setShowResults(true);
     };
 
@@ -145,7 +126,7 @@ const CramerRule = () => {
                     />
                 ))}
             </Form>
-            <Button variant="dark" onClick={calculateCramer}>Calculate</Button>
+            <Button variant="dark" onClick={calculateConjugateGradient}>Calculate</Button>
             <Button variant="info" onClick={handleFetchData} style={{ marginLeft: "10px" }}>Fetch API</Button>
             {showResults && (
                 <>
@@ -172,4 +153,4 @@ const CramerRule = () => {
     );
 };
 
-export default CramerRule;
+export default Conjugate;

@@ -4,77 +4,67 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const API_URL = 'http://localhost:5000/api/matrix-data';
 
-const CramerRule = () => {
-    const [matrixSize, setMatrixSize] = useState(2); // Default2x2
+const MatrixInverse = () => {
+    const [matrixSize, setMatrixSize] = useState(2);
     const [matrix, setMatrix] = useState(Array(2).fill(Array(2).fill(0)));
     const [constants, setConstants] = useState(Array(2).fill(0));
     const [solution, setSolution] = useState([]);
     const [showResults, setShowResults] = useState(false);
 
     useEffect(() => {
-        // Update size
-        const newMatrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(0));
-        const newConstants = Array(matrixSize).fill(0);
-        setMatrix(newMatrix);
-        setConstants(newConstants);
+        
+        setMatrix(Array(matrixSize).fill(Array(matrixSize).fill(0)));
+        setConstants(Array(matrixSize).fill(0));
         setShowResults(false);
     }, [matrixSize]);
 
-    const calculateDeterminant = (matrix) => {
+  
+    const inverseMatrix = (matrix) => {
         const n = matrix.length;
-        if (n === 2) {
-            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-        } else if (n === 3) {
-            return (
-                matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
-                matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
-                matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])
-            );
-        } else if (n === 4) {
-            
-            return (
-                matrix[0][0] * (
-                    matrix[1][1] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
-                    matrix[1][2] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) +
-                    matrix[1][3] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1])
-                ) -
-                matrix[0][1] * (
-                    matrix[1][0] * (matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2]) -
-                    matrix[1][2] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
-                    matrix[1][3] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0])
-                ) +
-                matrix[0][2] * (
-                    matrix[1][0] * (matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1]) -
-                    matrix[1][1] * (matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0]) +
-                    matrix[1][3] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
-                ) -
-                matrix[0][3] * (
-                    matrix[1][0] * (matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1]) -
-                    matrix[1][1] * (matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0]) +
-                    matrix[1][2] * (matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0])
-                )
-            );
+        let augmented = matrix.map((row, i) => [
+            ...row,
+            ...Array.from({ length: n }, (_, j) => (i === j ? 1 : 0))
+        ]);
+
+       
+        for (let i = 0; i < n; i++) {
+            if (augmented[i][i] === 0) {
+                alert("Matrix is singular and cannot be inverted.");
+                return null;
+            }
+
+       
+            let factor = augmented[i][i];
+            for (let j = 0; j < 2 * n; j++) {
+                augmented[i][j] /= factor;
+            }
+
+           
+            for (let k = 0; k < n; k++) {
+                if (k !== i) {
+                    let factor = augmented[k][i];
+                    for (let j = 0; j < 2 * n; j++) {
+                        augmented[k][j] -= factor * augmented[i][j];
+                    }
+                }
+            }
         }
-        return 0; 
+
+
+        const inverse = augmented.map(row => row.slice(n));
+        return inverse;
     };
 
-    const calculateCramer = () => {
-        const detA = calculateDeterminant(matrix);
-        if (detA === 0) {
-            alert("Determinant is zero. The system has no unique solution.");
-            return;
-        }
+    const calculateInverseSolution = () => {
+        const invMatrix = inverseMatrix(matrix);
+        if (!invMatrix) return; 
 
-        const solutions = [];
-        for (let i = 0; i < matrixSize; i++) {
-            const tempMatrix = matrix.map(row => [...row]);
-            for (let j = 0; j < matrixSize; j++) {
-                tempMatrix[j][i] = constants[j];
-            }
-            const detAi = calculateDeterminant(tempMatrix);
-            solutions.push(detAi / detA);
-        }
-        setSolution(solutions);
+    
+        const sol = constants.map((_, i) =>
+            invMatrix[i].reduce((sum, val, j) => sum + val * constants[j], 0)
+        );
+
+        setSolution(sol);
         setShowResults(true);
     };
 
@@ -145,8 +135,9 @@ const CramerRule = () => {
                     />
                 ))}
             </Form>
-            <Button variant="dark" onClick={calculateCramer}>Calculate</Button>
+            <Button variant="dark" onClick={calculateInverseSolution}>Calculate</Button>
             <Button variant="info" onClick={handleFetchData} style={{ marginLeft: "10px" }}>Fetch API</Button>
+
             {showResults && (
                 <>
                     <h5>Solutions:</h5>
@@ -172,4 +163,4 @@ const CramerRule = () => {
     );
 };
 
-export default CramerRule;
+export default MatrixInverse;
