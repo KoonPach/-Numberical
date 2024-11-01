@@ -3,6 +3,25 @@ const cors = require('cors');
 const app = express();
 const PORT = 5000;
 
+
+const fetchNewtonData = async () => {
+    try {
+        
+        const points = [
+            { x: 0, y: 9.81 },
+            { x: 20000, y: 9.7487 },
+            { x: 40000, y: 9.6879 },
+            { x: 60000, y: 9.6879 },
+            { x: 80000, y: 9.5682 }
+        ];
+
+        return { points };
+    } catch (error) {
+        console.error("Error fetching Newton data:", error);
+        throw error; 
+    }
+};
+
 const fetchDataRoot = async () => {
     try {
         const fx = "x^4 - 13"; 
@@ -36,6 +55,7 @@ const fetchMatrixData = async () => {
 };
 
 app.use(cors());
+
 app.get('/api/data', async (req, res) => {
     try {
         const data = await fetchDataRoot();
@@ -54,6 +74,15 @@ app.get('/api/matrix-data', async (req, res) => {
     }
 });
 
+
+app.get('/api/newton-data', async (req, res) => {
+    try {
+        const data = await fetchNewtonData();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching Newton data' });
+    }
+});
 
 app.get('/api/jacobi-data', async (req, res) => {
     try {

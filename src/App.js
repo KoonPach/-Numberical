@@ -15,6 +15,9 @@ import Cholesky from './All/Linear/Cholesky/Cholesky';
 import Jacobi from './All/Linear/Jacobi/Jacobi';
 import GaussSeidel from './All/Linear/GaussSeidel/GaussSeidel';
 import Conjugate from './All/Linear/Conjugate/Conjugate';
+import Newton from './All/Interpolation/Newton/Newton';
+import Lagrange from './All/Interpolation/Lagrange/Lagrange';
+import Spline from './All/Interpolation/Spline/Spline';
 const App = () => {
     return (
         <Router>
@@ -82,6 +85,27 @@ const App = () => {
                     
                 </div>
             </div>
+
+            <div className="container-fluid p-3">
+
+            <div className="btn-group">         
+                <h3 className="me-2">Interpolation</h3>
+                    <Link to="/Newton" className="me-2">
+                        <button className="btn btn-dark">Newton</button> 
+                    </Link>
+
+                    <Link to="/Lagrange" className="me-2">
+                        <button className="btn btn-dark">Lagrange</button> 
+                    </Link>
+
+                    <Link to="/Spline" className="me-2">
+                        <button className="btn btn-dark">Spline</button> 
+                    </Link>
+                    
+                    
+                </div>
+            </div>
+            
             <hr></hr>
             <Routes>
                 <Route path="/bisection" element={<BisectionPage />} />
@@ -98,6 +122,9 @@ const App = () => {
                 <Route path="/Jacobi" element={<Jacobi />} /> 
                 <Route path="/GaussSeidel" element={<GaussSeidel />} /> 
                 <Route path="/Conjugate" element={<Conjugate />} /> 
+                <Route path="/Newton" element={<Newton />} /> 
+                <Route path="/Lagrange" element={<Lagrange />} /> 
+                <Route path="/Spline" element={<Spline />} /> 
             </Routes>
         </Router>
     );

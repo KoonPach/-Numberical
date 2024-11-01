@@ -5,9 +5,7 @@ import { Line } from 'react-chartjs-2';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
-
 const API_URL = 'http://localhost:5000/api/data';
-
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const FalsePosition = () => {
