@@ -2,17 +2,17 @@ import { useState, useEffect } from "react";
 import { Button, Container, Form, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const API_URL = 'http://localhost:5000/api/matrix-data';
+
 
 const CramerRule = () => {
-    const [matrixSize, setMatrixSize] = useState(2); // Default2x2
+    const [matrixSize, setMatrixSize] = useState(2); 
     const [matrix, setMatrix] = useState(Array(2).fill(Array(2).fill(0)));
     const [constants, setConstants] = useState(Array(2).fill(0));
     const [solution, setSolution] = useState([]);
     const [showResults, setShowResults] = useState(false);
 
     useEffect(() => {
-        // Update size
+        
         const newMatrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(0));
         const newConstants = Array(matrixSize).fill(0);
         setMatrix(newMatrix);
@@ -97,7 +97,7 @@ const CramerRule = () => {
 
     const handleFetchData = async () => {
         try {
-            const response = await fetch(API_URL);
+            const response = await fetch('http://localhost:5000/api/matrix-data');
             const result = await response.json();
             setMatrix(result.matrix);
             setConstants(result.constants);

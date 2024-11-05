@@ -5,7 +5,7 @@ import { Line } from 'react-chartjs-2';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
-const API_URL = 'http://localhost:5000/api/data';
+
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const FalsePosition = () => {
@@ -72,11 +72,11 @@ const FalsePosition = () => {
 
     const handleFetchData = async () => {
         try {
-            const response = await fetch(API_URL);
+            const response = await fetch('http://localhost:5000/api/root-data');
             const result = await response.json();
-            setEquation(result.fx); // ตั้งค่า f(x)
-            setXL(result.XL); // ตั้งค่า XL
-            setXR(result.XR); // ตั้งค่า XR
+            setEquation(result.fx); 
+            setXL(result.XL); 
+            setXR(result.XR); 
         } catch (error) {
             console.error("Error fetching data:", error);
         }

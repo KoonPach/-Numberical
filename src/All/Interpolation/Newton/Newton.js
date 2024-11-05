@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const API_URL = "http://localhost:5000/api/newton-data";
 
 const NewtonInterpolation = () => {
     const [points, setPoints] = useState([{ x: '', y: '' }]);
@@ -10,26 +9,26 @@ const NewtonInterpolation = () => {
     const [interpolatedValue, setInterpolatedValue] = useState(null);
     const [showResults, setShowResults] = useState(false);
 
-    // Function to fetch Newton data from the API
+    
     const handleFetchData = async () => {
         try {
-            const response = await fetch(API_URL);
+            const response = await fetch('http://localhost:5000/api/newton-data');
             const result = await response.json();
-            setPoints(result.points.map(point => ({ x: point.x, y: point.y }))); // Assuming the API returns an array of points with x and y
+            setPoints(result.points.map(point => ({ x: point.x, y: point.y }))); 
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     };
 
-    // Function to perform Newton's interpolation
+    
     const calculateNewtonInterpolation = (x) => {
         const n = points.length;
-        let result = points[0].y; // Initial value for result (f(x0))
+        let result = points[0].y; 
 
-        // Calculate the divided differences
+      
         const dividedDifferences = Array(n).fill(0).map(() => Array(n).fill(0));
         for (let i = 0; i < n; i++) {
-            dividedDifferences[i][0] = parseFloat(points[i].y); // f[x_i]
+            dividedDifferences[i][0] = parseFloat(points[i].y); 
         }
 
         for (let j = 1; j < n; j++) {
@@ -38,11 +37,11 @@ const NewtonInterpolation = () => {
             }
         }
 
-        // Calculate interpolated value using Newton's formula
+        
         for (let i = 1; i < n; i++) {
-            let term = dividedDifferences[0][i]; // f[x_0, x_1, ..., x_i]
+            let term = dividedDifferences[0][i]; 
             for (let j = 0; j < i; j++) {
-                term *= (x - parseFloat(points[j].x)); // (x - x_j)
+                term *= (x - parseFloat(points[j].x));
             }
             result += term;
         }
@@ -63,7 +62,7 @@ const NewtonInterpolation = () => {
     };
 
     const handleAddPoint = () => {
-        setPoints([...points, { x: '', y: '' }]); // Add a new point with empty values
+        setPoints([...points, { x: '', y: '' }]); 
     };
 
     return (

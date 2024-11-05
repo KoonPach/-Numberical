@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button, Container, Form, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const API_URL = 'http://localhost:5000/api/matrix-data';
+
 
 const Cholesky = () => {
     const [matrixSize, setMatrixSize] = useState(2); 
@@ -59,7 +59,7 @@ const Cholesky = () => {
 
     const calculateCholesky = () => {
         const L = choleskyDecompose(matrix);
-        const Lt = L.map((row, i) => row.map((_, j) => L[j][i])); // Transpose of L
+        const Lt = L.map((row, i) => row.map((_, j) => L[j][i])); 
         const y = forwardSubstitution(L, constants);
         const x = backwardSubstitution(Lt, y);
         setSolution(x);
@@ -85,7 +85,7 @@ const Cholesky = () => {
 
     const handleFetchData = async () => {
         try {
-            const response = await fetch(API_URL);
+            const response = await fetch('http://localhost:5000/api/matrix-data');
             const result = await response.json();
             setMatrix(result.matrix);
             setConstants(result.constants);

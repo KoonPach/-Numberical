@@ -15,10 +15,10 @@ const Secant = () => {
     const [X1, setX1] = useState();
     const [showResults, setShowResults] = useState(false);
 
-    // ฟังก์ชันสำหรับดึงข้อมูลจาก API
+   
     const fetchApiData = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/data');
+            const response = await fetch('http://localhost:5000/api/root-data');
             const data = await response.json();
             setEquation(data.fx);
             setX0(data.X0); 
@@ -52,7 +52,7 @@ const Secant = () => {
             };
             dataArr.push(newData);
 
-            // Prepare for next iteration
+           
             x0 = x1;
             x1 = xn;
         } while (ea > e && iter < MAX);
@@ -60,7 +60,7 @@ const Secant = () => {
         setData(dataArr);
         setValueIter(dataArr.map((d) => d.iteration));
         setValueXm(dataArr.map((d) => d.Xn));
-        setShowResults(true); // Show results after calculation
+        setShowResults(true); 
     };
 
     const handleCalculate = () => {

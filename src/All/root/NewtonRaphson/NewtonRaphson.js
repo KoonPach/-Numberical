@@ -17,7 +17,7 @@ const NewtonRaphson = () => {
   
     const fetchApiData = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/data');
+            const response = await fetch('http://localhost:5000/api/root-data');
             const data = await response.json();
             setEquation(data.fx); 
             setInitialX(data.X0); 

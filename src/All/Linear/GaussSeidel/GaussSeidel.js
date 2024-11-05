@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Button, Container, Form, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const API_URL = 'http://localhost:5000/api/matrix-data';
 
 const GaussSeidel = () => {
     const [matrixSize, setMatrixSize] = useState(2); 
@@ -27,7 +26,7 @@ const GaussSeidel = () => {
         const tolerance = 1e-10; 
 
         for (let it = 0; it < maxIterations; it++) {
-            const xOld = [...x]; //Store old values 
+            const xOld = [...x]; 
 
             for (let i = 0; i < matrixSize; i++) {
                 let sum = constants[i];
@@ -39,7 +38,7 @@ const GaussSeidel = () => {
                 x[i] = sum / matrix[i][i];
             }
 
-            // Check for convergence
+            
             const maxError = Math.max(...x.map((val, idx) => Math.abs(val - xOld[idx])));
             if (maxError < tolerance) {
                 break;
@@ -69,7 +68,7 @@ const GaussSeidel = () => {
 
     const handleFetchData = async () => {
         try {
-            const response = await fetch(API_URL);
+            const response = await fetch('http://localhost:5000/api/matrix-data');
             const result = await response.json();
             setMatrix(result.matrix);
             setConstants(result.constants);

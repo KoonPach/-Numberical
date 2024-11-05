@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const API_URL = "http://localhost:5000/api/newton-data";
+
 
 const Lagrange = () => {
     const [points, setPoints] = useState([{ x: '', y: '' }]);
@@ -13,7 +13,7 @@ const Lagrange = () => {
     
     const handleFetchData = async () => {
         try {
-            const response = await fetch(API_URL);
+            const response = await fetch('http://localhost:5000/api/newton-data');
             const result = await response.json();
             setPoints(result.points.map(point => ({ x: point.x, y: point.y }))); 
         } catch (error) {
@@ -52,7 +52,7 @@ const Lagrange = () => {
     };
 
     const handleAddPoint = () => {
-        setPoints([...points, { x: '', y: '' }]); // Add a new point with empty values
+        setPoints([...points, { x: '', y: '' }]); 
     };
 
     return (

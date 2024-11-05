@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button, Container, Form, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const API_URL = 'http://localhost:5000/api/matrix-data';
+
 
 const Conjugate = () => {
     const [matrixSize, setMatrixSize] = useState(2); 
@@ -23,7 +23,7 @@ const Conjugate = () => {
     const calculateConjugateGradient = () => {
         const x = Array(matrixSize).fill(0); 
         const b = constants.slice();
-        const r = b.map((bi, i) => bi - matrix[i].reduce((acc, aij, j) => acc + aij * x[j], 0)); // Initial residual
+        const r = b.map((bi, i) => bi - matrix[i].reduce((acc, aij, j) => acc + aij * x[j], 0)); 
         let p = [...r]; 
         const tolerance = 1e-10;
 
@@ -78,7 +78,7 @@ const Conjugate = () => {
 
     const handleFetchData = async () => {
         try {
-            const response = await fetch(API_URL);
+            const response = await fetch('http://localhost:5000/api/matrix-data');
             const result = await response.json();
             setMatrix(result.matrix);
             setConstants(result.constants);

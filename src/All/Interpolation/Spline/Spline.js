@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const API_URL = "http://localhost:5000/api/newton-data"; 
 
 const LinearSplineInterpolation = () => {
     const [points, setPoints] = useState([{ x: '', y: '' }]);
@@ -13,7 +12,7 @@ const LinearSplineInterpolation = () => {
     
     const handleFetchData = async () => {
         try {
-            const response = await fetch(API_URL);
+            const response = await fetch('http://localhost:5000/api/newton-data');
             const result = await response.json();
             setPoints(result.points.map(point => ({ x: point.x, y: point.y }))); 
         } catch (error) {
@@ -95,6 +94,7 @@ const LinearSplineInterpolation = () => {
             <Button variant="dark" onClick={handleCalculate} style={{ marginRight: "10px" }}>
                 Calculate
             </Button>
+            
             <Button variant="info" onClick={handleFetchData} style={{ marginLeft: "10px" }}>
                 Fetch API
             </Button>

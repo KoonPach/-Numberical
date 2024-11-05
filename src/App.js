@@ -18,12 +18,25 @@ import Conjugate from './All/Linear/Conjugate/Conjugate';
 import Newton from './All/Interpolation/Newton/Newton';
 import Lagrange from './All/Interpolation/Lagrange/Lagrange';
 import Spline from './All/Interpolation/Spline/Spline';
+import LinearRegression from './All/Regression/LinearRegression/LinearRegression';
+import PolynomialRegression from './All/Regression/PolynomialRegression/PolynomialRegression';
+import MultipleLinearRegression from './All/Regression/MultipleLinearRegression/MultipleLinearRegression';
+import SingleTrapezoidal from './All/Integration/SingleTrapezoidal/SingleTrapezoidal';
+import CompositeTrapzoidal from './All/Integration/CompositeTrapzoidal/CompositeTrapzoidal';
+import SingleSimpson from './All/Integration/SingleSimpson/SingleSimpson';
+import CompositeSimpson from './All/Integration/CompositeSimpson/CompositeSimpson';
+import Forward from './All/Differentiation/Forward/Forward';
+import Forward2 from './All/Differentiation/Forward/Forward2';
+import Backward from './All/Differentiation/Backward/Backward';
+import Backward2 from './All/Differentiation/Backward/Backward2';
+import Central from './All/Differentiation/Central/Central';
+import Central2 from './All/Differentiation/Central/Central2';
 const App = () => {
     return (
         <Router>
             <div className="container-fluid p-3">
                 <div className="btn-group"> 
-                    <h3>Root of equation</h3>
+                    <h3 className="me-2">Root of equation</h3>
                     <Link to="/" className="me-2">
                         <button className="btn btn-primary">Home</button>
                     </Link>
@@ -105,6 +118,90 @@ const App = () => {
                     
                 </div>
             </div>
+
+
+            <div className="container-fluid p-3">
+
+            <div className="btn-group">         
+                <h3 className="me-2">Regression</h3>
+                    <Link to="/LinearRegression" className="me-2">
+                        <button className="btn btn-dark">LinearRegression</button> 
+                    </Link>
+
+                    <Link to="/PolynomialRegression" className="me-2">
+                        <button className="btn btn-dark">PolynomialRegression</button> 
+                    </Link>
+
+                    <Link to="/MultipleLinearRegression" className="me-2">
+                        <button className="btn btn-dark">MultipleLinearRegression</button> 
+                    </Link>
+                    
+                    
+                </div>
+            </div>
+
+            <div className="container-fluid p-3">
+
+            <div className="btn-group">         
+                <h3 className="me-2">Integration</h3>
+
+                <Link to="/SingleTrapezoidal" className="me-2">
+                        <button className="btn btn-dark">SingleTrapezoidal</button> 
+                    </Link>
+
+                <Link to="/CompositeTrapzoidal" className="me-2">
+                        <button className="btn btn-dark">CompositeTrapzoidal</button> 
+                    </Link>
+
+                    <Link to="/SingleSimpson" className="me-2">
+                        <button className="btn btn-dark">SingleSimpson</button> 
+                    </Link>
+
+                    <Link to="/CompositeSimpson" className="me-2">
+                        <button className="btn btn-dark">CompositeSimpson</button> 
+                    </Link>
+
+                   
+                    
+                    
+                </div>
+            </div>
+
+            <div className="container-fluid p-3">
+
+            <div className="btn-group">         
+                <h3 className="me-2">Differentiation</h3>
+
+                <Link to="/Forward" className="me-2">
+                        <button className="btn btn-dark">Forward</button> 
+                    </Link>
+
+                <Link to="/Backward" className="me-2">
+                        <button className="btn btn-dark">Backward</button> 
+                    </Link>
+
+                    <Link to="/Central" className="me-2">
+                        <button className="btn btn-dark">Central</button> 
+                    </Link>
+
+                    <Link to="/Forward2" className="me-2">
+                        <button className="btn btn-dark">Forward2</button> 
+                    </Link>
+
+                    <Link to="/Backward2" className="me-2">
+                        <button className="btn btn-dark">Backward2</button> 
+                    </Link>
+
+                    <Link to="/Central2" className="me-2">
+                        <button className="btn btn-dark">Central2</button> 
+                    </Link>
+
+                   
+                    
+                    
+                </div>
+            </div>
+            
             
             <hr></hr>
             <Routes>
@@ -125,6 +222,19 @@ const App = () => {
                 <Route path="/Newton" element={<Newton />} /> 
                 <Route path="/Lagrange" element={<Lagrange />} /> 
                 <Route path="/Spline" element={<Spline />} /> 
+                <Route path="/LinearRegression" element={<LinearRegression />} /> 
+                <Route path="/PolynomialRegression" element={<PolynomialRegression />} /> 
+                <Route path="/MultipleLinearRegression" element={<MultipleLinearRegression />} /> 
+                <Route path="/SingleTrapezoidal" element={<SingleTrapezoidal />} /> 
+                <Route path="/CompositeTrapzoidal" element={<CompositeTrapzoidal />} /> 
+                <Route path="/SingleSimpson" element={<SingleSimpson />} /> 
+                <Route path="/CompositeSimpson" element={<CompositeSimpson />} /> 
+                <Route path="/Forward" element={<Forward />} /> 
+                <Route path="/Forward2" element={<Forward2 />} /> 
+                <Route path="/Backward" element={<Backward />} /> 
+                <Route path="/Backward2" element={<Backward2 />} /> 
+                <Route path="/Central" element={<Central />} /> 
+                <Route path="/Central2" element={<Central2 />} /> 
             </Routes>
         </Router>
     );

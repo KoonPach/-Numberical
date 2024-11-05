@@ -15,10 +15,10 @@ const OnePointIteration = () => {
     const [X0, setX0] = useState();
     const [showResults, setShowResults] = useState(false);
 
-    // ฟังก์ชันสำหรับดึงข้อมูลจาก API
+    
     const fetchApiData = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/data');
+            const response = await fetch('http://localhost:5000/api/root-data');
             const data = await response.json();
             setEquation(data.fx); 
             setX0(data.X0);
@@ -101,7 +101,7 @@ const OnePointIteration = () => {
                     <Form.Label>Input X0</Form.Label>
                     <input
                         type="number"
-                        value={X0} // แสดงค่า X0 ที่ได้จาก API
+                        value={X0} 
                         onChange={(e) => setX0(e.target.value)}
                         style={{ width: "20%", margin: "0 auto" }}
                         className="form-control"
